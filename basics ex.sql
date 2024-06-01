@@ -120,9 +120,10 @@ group by account_id
 
 --- i WAS HELPED BY CHATGPT TO FIND THE CORRECT SYNTAX FOR THIS QUERY
 SELECT 
-    account_id, (ROUND(FLOOR(SUM(CASE WHEN type<> 'PRIJEM' THEN amount ELSE 0 END)), 0)- ROUND(FLOOR(SUM(CASE WHEN type = 'PRIJEM' THEN amount ELSE 0 END)), 0)) as difference,
+    account_id, 
+    ROUND(FLOOR(SUM(CASE WHEN type = 'PRIJEM' THEN amount ELSE 0 END)), 0) - ROUND(FLOOR(SUM(CASE WHEN type <> 'PRIJEM' THEN amount ELSE 0 END)), 0) AS difference,
     ROUND(FLOOR(SUM(CASE WHEN type = 'PRIJEM' THEN amount ELSE 0 END)), 0) AS incoming,
-    ROUND(FLOOR(SUM(CASE WHEN type <>'PRIJEM' THEN amount ELSE 0 END)), 0) AS outgoing
+    ROUND(FLOOR(SUM(CASE WHEN type <> 'PRIJEM' THEN amount ELSE 0 END)), 0) AS outgoing
 FROM 
     bank.trans
 WHERE 
@@ -131,16 +132,15 @@ GROUP BY
     account_id;
 
 
--- 21. Continuing with the previous example, rank the top 10 account_ids based on their difference.
 
+-- 21. Continuing with the previous example, rank the top 10 account_ids based on their difference.
+-- I AM NOT SURE WHY I GET COMPLETELY DIFFERENT NUMBERS
 SELECT 
-    account_id, (ROUND(FLOOR(SUM(CASE WHEN type<> 'PRIJEM' THEN amount ELSE 0 END)), 0)- ROUND(FLOOR(SUM(CASE WHEN type = 'PRIJEM' THEN amount ELSE 0 END)), 0)) as difference,
-    ROUND(FLOOR(SUM(CASE WHEN type = 'PRIJEM' THEN amount ELSE 0 END)), 0) AS incoming,
-    ROUND(FLOOR(SUM(CASE WHEN type <>'PRIJEM' THEN amount ELSE 0 END)), 0) AS outgoing
+    account_id, 
+    ROUND(FLOOR(SUM(CASE WHEN type = 'PRIJEM' THEN amount ELSE 0 END)), 0) - ROUND(FLOOR(SUM(CASE WHEN type <> 'PRIJEM' THEN amount ELSE 0 END)), 0) AS difference
 FROM 
     bank.trans
-
-GROUP BY 
-    account_id
+GROUP BY  account_id
 order by difference desc
 limit 10
+
